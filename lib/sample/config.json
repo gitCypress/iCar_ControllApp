@@ -1,0 +1,51 @@
+{
+
+    "speedStraight": 10,
+    "speedCurve": 8,
+    "speedBridge": 7,
+    "speedRing": 5,
+
+    "capAddr": "/dev/video0-fixed",
+    "bufferSize": 4,
+    "capWidth": 320,
+    "capHeight": 240,
+    "capFPS": 180,
+
+    "imgWidth": 300,
+    "imgHeight": 200,
+    "controlLine": 65,
+
+    "commAddr": "/dev/ttyUSB0-fixed",
+    "commHeader": 255,
+
+    "debugComm": false,
+    "debugImg": false,
+    "debugCamera": false,
+
+    "record": [
+        {
+            "#speedStraight": "直线期望速度",
+            "#speedCurve": "弯道期望速度",
+            "#speedBridge": "坡道期望速度",
+            "#speedRing": "环岛期望速度",
+
+            "#capAddr": "摄像头设备地址",
+            "#capWidth": "摄像头宽度",
+            "#capHeight": "摄像头高度",
+            "#capFPS": "摄像头帧率",
+
+            "#imgWidth": "数据图像宽度",
+            "#imgHeight": "数据图像高度",
+            "#controlLine": "控制线位置",
+
+            "#commAddr": "串口设备地址",
+            "#commHeader": "串口帧头",
+
+            "#debugComm": "是否打印串口通信信息",
+            "#debugImg": "是否输出图像处理图片",
+            "#debugCamera": "是否输出摄像头拍摄图片"
+        }
+    ]
+    
+
+}
