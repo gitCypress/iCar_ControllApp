@@ -5,13 +5,15 @@ import '../constant/constant_export.dart';
 import '../service/service_export.dart';
 
 class HomePage extends StatelessWidget {
-  const HomePage({super.key});
+  final VoidCallback freshAppBarUI;
+
+  const HomePage({super.key, required this.freshAppBarUI});
 
   @override
   Widget build(BuildContext context) {
     return Column(
       children: [
-        StatusCard(),
+        StatusCard(freshAppBarUI: freshAppBarUI,),
       ],
     );
   }
@@ -19,7 +21,9 @@ class HomePage extends StatelessWidget {
 
 
 class StatusCard extends StatefulWidget {
-  const StatusCard({super.key});
+  const StatusCard({super.key, required this.freshAppBarUI});
+
+  final VoidCallback freshAppBarUI;
 
   @override
   State<StatusCard> createState() => _StatusCardState();
@@ -59,6 +63,8 @@ class _StatusCardState extends State<StatusCard> {
         });
       }
     }
+
+    widget.freshAppBarUI();
   }
 
   Future<void> setSSHInfo() async {

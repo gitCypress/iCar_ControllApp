@@ -18,7 +18,7 @@ class AppStrings {
     noLocalConfig: '尚未加载过配置',
     load: '加载',
     upload: '上载',
-    sync: '手动同步',
+    recovery: '恢复',
   );
 
   static const settingsPage = (

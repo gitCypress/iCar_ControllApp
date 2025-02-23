@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:icar/src/service/service_export.dart';
 import 'package:path/path.dart' as p;
 
 import 'package:path_provider/path_provider.dart';
@@ -17,6 +18,11 @@ class Paths {
     final dir = await getApplicationSupportDirectory();
     return p.join(dir.path, joinPath);
   }
+}
+
+// 管理远程和本地配置信息
+class ConfigService {
+
 }
 
 

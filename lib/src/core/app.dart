@@ -10,8 +10,8 @@ class MaterialApplication extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       theme: ThemeData(
-          useMaterial3: true,
-          colorScheme: ColorScheme.fromSeed(seedColor: Colors.lightBlue),
+        useMaterial3: true,
+        colorScheme: ColorScheme.fromSeed(seedColor: Colors.lightBlue),
       ),
       home: Navigation(),
       navigatorKey: navigatorKey,
@@ -67,7 +67,6 @@ class _NavigationState extends State<Navigation> {
               ),
               icon: Icon(
                 Icons.home_outlined,
-                color: theme.colorScheme.primary,
               ),
               label: AppStrings.navigation.homePage),
           NavigationDestination(
@@ -77,9 +76,9 @@ class _NavigationState extends State<Navigation> {
             ),
             icon: Icon(
               Icons.tune_outlined,
-              color: theme.colorScheme.primary,
             ),
             label: AppStrings.navigation.configurePage,
+            enabled: sshService.isConnected,
           ),
           NavigationDestination(
             selectedIcon: Icon(
@@ -88,7 +87,6 @@ class _NavigationState extends State<Navigation> {
             ),
             icon: Icon(
               Icons.settings_outlined,
-              color: theme.colorScheme.primary,
             ),
             label: AppStrings.navigation.settingsPage,
           ),
@@ -97,7 +95,11 @@ class _NavigationState extends State<Navigation> {
       body: IndexedStack(
         index: currentPageIndex,
         children: [
-          HomePage(),
+          HomePage(
+            freshAppBarUI: () {
+              setState(() {});
+            },
+          ),
           ConfigurePage(),
           SettingsPage(),
         ],

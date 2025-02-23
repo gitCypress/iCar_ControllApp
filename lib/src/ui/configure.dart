@@ -109,17 +109,24 @@ class ConfigureForm extends StatefulWidget {
 }
 
 class _ConfigureFormState extends State<ConfigureForm> {
-  final _formKey = GlobalKey<FormState>();
-  final testController = TextEditingController();
-  final Map<String, TextEditingController> _configTextControllers =
-      {}; // 输入框控制器，对应Keys
-  Map<String, dynamic>? _configAsMap; // 配置信息
-  List<String>? _configAsMapKeys; // 配置信息Map的键列表，相当于通过映射用下标访问。
+  final _formGlobalKey = GlobalKey<FormState>();
+
+  // 输入框控制器，对应Keys
+  final Map<String, TextEditingController> _formTextControllers = {};
+
+  // 配置信息
+  Map<String, dynamic>? _config;
+
+  // 配置信息Map的键列表，相当于通过映射用下标访问。
+  List<String>? _configKeys;
+
+  // 本地、远程配置信息一致性
+  bool isConsistentConfig = false;
 
   @override
   void initState() {
     super.initState();
-    // 初始化时根据配置解析加载UI，有就加载，没有就空白页
+    // TODO: 初始化应当只从本地加载配置
     loadConfig();
   }
 
@@ -153,6 +160,10 @@ class _ConfigureFormState extends State<ConfigureForm> {
     }
   }
 
+  void downloadConfig(){
+
+  }
+
   // 清理配置并加载，并设置文本的控制器。已连接使用远程，未连接使用本地
   void loadConfig() async {
     Map<String, dynamic>? configAsMap;
@@ -163,46 +174,62 @@ class _ConfigureFormState extends State<ConfigureForm> {
       configAsMap = await _getConfigFromLocal();
     }
 
+    // TODO: loadConfig 应当只负责加载本地的配置
+    // configAsMap = await _getConfigFromLocal();
+
     // 不为空时进一步处理
     if (configAsMap != null) {
       configAsMap.remove('record'); // 清理注释项
       setState(() {
-        _configAsMap = configAsMap; // 载入配置
-        _configAsMapKeys = _configAsMap!.keys.toList(); // 下标映射
+        _config = configAsMap; // 载入配置
+        _configKeys = _config!.keys.toList(); // 下标映射
+        _configKeys!.sort((String a, String b) => a.compareTo(b));
       });
       setTextFieldWithConfig();
     }
   }
 
+  // 上载配置，此时一定是不为空也联网的
+  void uploadConfig() {
+    Map<String, dynamic> configMap = {};
+    for (var i in _configKeys!) {}
+  }
+
   void setTextFieldWithConfig() {
-    for (var key in _configAsMapKeys!) {
-      // 配置控制器并同步当前值
-      _configTextControllers[key] = TextEditingController();
-      if (sshService.isConnected) {
-        _configTextControllers[key]!.text = _configAsMap![key].toString();
+    if (_configKeys != null) {
+      for (var key in _configKeys!) {
+        // 配置控制器并同步当前值
+        _formTextControllers[key] = TextEditingController();
+        if (sshService.isConnected) {
+          _formTextControllers[key]!.text = _config![key].toString();
+        }
       }
     }
   }
 
+  // 远程和本地内容的一致性检查
+  void check() {}
+
   @override
   void dispose() {
-    testController.dispose();
+    for (var key in _configKeys!) {
+      _formTextControllers[key]!.dispose();
+    }
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    setTextFieldWithConfig();
-
-    return (_configAsMap != null)
+    // setTextFieldWithConfig();
+    return (_config != null)
         ? Form(
-            key: _formKey,
+            key: _formGlobalKey,
             child: Column(
               children: [
                 Expanded(
                   child: GridView.builder(
                     shrinkWrap: true,
-                    itemCount: _configAsMap!.length,
+                    itemCount: _config!.length,
                     physics: ClampingScrollPhysics(),
                     padding: EdgeInsets.symmetric(
                       vertical: 10,
@@ -215,9 +242,9 @@ class _ConfigureFormState extends State<ConfigureForm> {
                       childAspectRatio: 1.2,
                     ),
                     itemBuilder: (context, index) {
-                      final String key = _configAsMapKeys![index];
+                      final String key = _configKeys![index];
                       return TextFormField(
-                        controller: _configTextControllers[key],
+                        controller: _formTextControllers[key],
                         enabled: sshService.isConnected,
                         decoration: InputDecoration(
                           border: OutlineInputBorder(),
@@ -237,9 +264,10 @@ class _ConfigureFormState extends State<ConfigureForm> {
                     mainAxisAlignment: MainAxisAlignment.end,
                     children: [
                       FilledButton.tonal(
-                        // 此处必定远程加载并有配置
-                        onPressed: sshService.isConnected ? loadConfig : null,
-                        child: Text(AppStrings.configurePage.sync),
+                        // TODO：这里
+                        onPressed:
+                            sshService.isConnected ? loadConfig : null,
+                        child: Text(AppStrings.configurePage.recovery),
                       ),
                       SizedBox(
                         width: 10,
@@ -260,10 +288,6 @@ class _ConfigureFormState extends State<ConfigureForm> {
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              Text(
-                '🧐',
-                style: TextStyle(fontSize: 180),
-              ),
               Text(AppStrings.configurePage.noLocalConfig,
                   style: TextStyle(fontSize: 20)),
               SizedBox(

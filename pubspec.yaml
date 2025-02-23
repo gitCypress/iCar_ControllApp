@@ -2,7 +2,7 @@ name: icar
 description: "调整智能车运行参数，控制智能车的各项行为。"
 publish_to: 'none'
 
-version: 0.1.0+3
+version: 0.1.1+4
 
 environment:
   sdk: ^3.6.1
